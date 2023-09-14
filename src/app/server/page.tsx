@@ -1,7 +1,7 @@
 import processImages from "../api/ocrModule";
 import fs from "fs";
 import path from "path";
-
+import { existsSync } from "fs";
 const INPUT_DIR = process.env.INPUT_DIR || "./input";
 const OUTPUT_DIR = process.env.OUTPUT_DIR || "./output";
 let logs = "";
@@ -18,7 +18,12 @@ export default function Page() {
       if (typeof value === "object" && "arrayBuffer" in value) {
         const file = value as unknown as Blob;
         const buffer = Buffer.from(await file.arrayBuffer());
-        fs.writeFileSync(`D:/nextjs/input/${file.name}`, buffer);
+        if (!fs.existsSync(`D:/nextjs/input/${file.name}`)) {
+          fs.writeFileSync(`D:/nextjs/input/${file.name}`, buffer);
+          console.log(`${file.name} uploaded!`);
+        } else {
+          console.log(`${file.name} already exists!`);
+        }
       }
     const inputDirContents = fs
       .readdirSync(INPUT_DIR)
